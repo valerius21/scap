@@ -15,22 +15,22 @@ const sleeperDuration = 1 * time.Second
 
 func NetHttp() {
 	// Define the routes and their corresponding handlers
-	http.HandleFunc("/image", imageHandler)
-	http.HandleFunc("/sleep", sleepHandler)
-	http.HandleFunc("/empty", emptyHandler)
-	http.HandleFunc("/math", mathHandler)
+	http.HandleFunc("/image", ImageHandler)
+	http.HandleFunc("/sleep", SleepHandler)
+	http.HandleFunc("/empty", EmptyHandler)
+	http.HandleFunc("/math", MathHandler)
 
 	// Start the server
 	log.Println("Server listening on port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func imageHandler(w http.ResponseWriter, r *http.Request) {
+func ImageHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 	fmt.Fprintf(w, "imageHandler: not implemented")
 }
 
-func sleepHandler(w http.ResponseWriter, r *http.Request) {
+func SleepHandler(w http.ResponseWriter, r *http.Request) {
 	// Sleep for 1 seconds before responding
 	fns.SleeperFn(sleeperDuration)
 
@@ -39,14 +39,14 @@ func sleepHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "sleepHandler: slept for %v", sleeperDuration)
 }
 
-func emptyHandler(w http.ResponseWriter, r *http.Request) {
+func EmptyHandler(w http.ResponseWriter, r *http.Request) {
 	// Return an empty response with status code 204
 	fns.EmptyFn() // TODO: is this necessary?
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "emptyHandler: empty response")
 }
 
-func mathHandler(w http.ResponseWriter, r *http.Request) {
+func MathHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse the query parameter "number" and calculate its square root
 	numberStr := r.URL.Query().Get("number")
 	number, err := strconv.Atoi(numberStr)
