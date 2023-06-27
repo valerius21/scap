@@ -1,6 +1,8 @@
 package fns
 
+import "fmt"
+
 func GenerateImageMetadataFn() error {
-	// TODO: implement
-	return nil
+	// TODO: implement this function
+	return fmt.Errorf("not implemented")
 }
