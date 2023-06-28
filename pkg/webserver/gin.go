@@ -44,7 +44,7 @@ func Gin(receiverPort string) {
 	})
 
 	r.GET("/image", func(ctx *gin.Context) {
-		fns.GenerateImageMetadataFn()
+		fns.TransformImage()
 		ctx.JSON(http.StatusNotImplemented, gin.H{
 			"message": "not implemented",
 		})

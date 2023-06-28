@@ -119,7 +119,7 @@ func (h *messageHandler) HandleMessage(m *nsq.Message) error {
 		{
 			log.Info().Msg("Image message received")
 			now := time.Now()
-			fns.GenerateImageMetadataFn()
+			fns.TransformImage()
 			ts := utils.TimeTrack(now, "image")
 			response, err = json.Marshal(dto.Message{
 				Name:     "node:" + ts.Instance,

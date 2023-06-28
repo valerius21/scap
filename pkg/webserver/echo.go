@@ -26,7 +26,7 @@ func Echo(receiverPort string) {
 	})
 
 	e.GET("/image", func(c echo.Context) error {
-		fns.GenerateImageMetadataFn()
+		fns.TransformImage()
 		return c.JSON(500, "Image: not implemented")
 	})
 

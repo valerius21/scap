@@ -6,11 +6,11 @@ require (
 	github.com/DarthPestilane/easytcp v0.4.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/gofiber/fiber/v2 v2.47.0
+	github.com/gographics/imagick v3.2.0+incompatible
 	github.com/kataras/iris/v12 v12.2.0
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/labstack/gommon v0.4.0
 	github.com/nsqio/go-nsq v1.1.0
-	github.com/pawelgaczynski/gain v0.3.1-alpha
 	github.com/rs/zerolog v1.29.1
 )
 
@@ -20,7 +20,6 @@ require (
 	github.com/CloudyKit/jet/v6 v6.2.0 // indirect
 	github.com/Joker/jade v1.1.3 // indirect
 	github.com/Shopify/goreferrer v0.0.0-20220729165902-8cddb4f5de06 // indirect
-	github.com/alitto/pond v1.7.1 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
@@ -60,7 +59,6 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/philhofer/fwd v1.1.2 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/savsgio/dictpool v0.0.0-20221023140959-7bf2e61cea94 // indirect
@@ -87,6 +85,7 @@ require (
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
+	gopkg.in/gographics/imagick.v3 v3.4.2 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
