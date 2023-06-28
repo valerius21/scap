@@ -7,10 +7,7 @@ import (
 	"github.com/valerius21/scap/pkg/sender"
 	"net"
 	"net/http"
-	"strconv"
 	"time"
-
-	"github.com/valerius21/scap/pkg/fns"
 )
 
 const sleeperDuration = 1 * time.Second
@@ -43,30 +40,34 @@ func ImageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SleepHandler(w http.ResponseWriter, r *http.Request) {
-	// Sleep for 1 seconds before responding
-	fns.SleeperFn(sleeperDuration)
-
+	msg, err := CreateHandler("net/http", "sleep", "")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// omit a text response
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "sleepHandler: slept for %v", sleeperDuration)
+	fmt.Fprintf(w, string(msg))
 }
 
 func EmptyHandler(w http.ResponseWriter, r *http.Request) {
-	// Return an empty response with status code 204
-	fns.EmptyFn() // TODO: is this necessary?
+	msg, err := CreateHandler("net/http", "empty", "")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "emptyHandler: empty response")
+	fmt.Fprintf(w, string(msg))
 }
 
 func MathHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse the query parameter "number" and calculate its square root
 	numberStr := r.URL.Query().Get("number")
-	number, err := strconv.Atoi(numberStr)
+	msg, err := CreateHandler("net/http", "math", numberStr)
 	if err != nil {
-		http.Error(w, "Invalid number", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	result := fns.MathFn(number)
-	fmt.Fprintf(w, "Square root of %v: %v", number, result)
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, string(msg))
 }

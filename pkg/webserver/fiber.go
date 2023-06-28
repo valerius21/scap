@@ -1,9 +1,6 @@
 package webserver
 
 import (
-	"encoding/json"
-	"github.com/valerius21/scap/pkg/dto"
-	"github.com/valerius21/scap/pkg/nsq"
 	"github.com/valerius21/scap/pkg/utils"
 	"time"
 
@@ -23,16 +20,28 @@ func Fiber(receiverHost, receiverPort string) {
 		return c.SendString("imageHandler: not implemented")
 	})
 	app.Get("/empty", func(ctx *fiber.Ctx) error {
-		return createHandler("fiber", "empty", "", ctx)
+		msg, err := CreateHandler("fiber", "empty", "")
+		if err != nil {
+			return err
+		}
+		return ctx.Send(msg)
 	})
 
 	app.Get("/math", func(c *fiber.Ctx) error {
 		n := c.Query("number")
-		return createHandler("fiber", "math", n, c)
+		msg, err := CreateHandler("fiber", "math", n)
+		if err != nil {
+			return err
+		}
+		return c.Send(msg)
 	})
 
 	app.Get("/sleep", func(c *fiber.Ctx) error {
-		return createHandler("fiber", "sleep", "", c)
+		msg, err := CreateHandler("fiber", "sleep", "")
+		if err != nil {
+			return err
+		}
+		return c.Send(msg)
 	})
 
 	// Start the server
@@ -41,55 +50,4 @@ func Fiber(receiverHost, receiverPort string) {
 		log.Error().Err(err).Msg("Failed to start server")
 		return
 	}
-}
-
-func createHandler(framework, handler, args string, c *fiber.Ctx) error {
-	startFunction := time.Now()
-	// Create a message struct
-	message := dto.Message{
-		Name:     handler,
-		Data:     args,
-		Duration: -1,
-	}
-
-	// Marshal the message to JSON
-	messageBytes, err := json.Marshal(message)
-	if err != nil {
-		log.Error().Err(err).Msg("Error when marshaling the message")
-		return err
-	}
-
-	startTrip := time.Now()
-	// Publish the message to NSQ
-	err = nsq.PublishMessage(messageBytes)
-	if err != nil {
-		log.Error().Err(err).Msg("Error when publishing the message to NSQ")
-		return err
-	}
-
-	// Wait for the response from NSQ
-	response, err := nsq.WaitForResponse()
-	if err != nil {
-		log.Error().Err(err).Msg("Error when waiting for the response from NSQ")
-		return err
-	}
-	endTripTs := utils.TimeTrack(startTrip, framework+":"+handler+":trip")
-
-	// Unmarshal the response
-	var resp dto.Message
-	err = json.Unmarshal([]byte(response), &resp)
-
-	ts := utils.TimeTrack(startFunction, framework+":"+handler+":function")
-	wsResp := dto.WebServerResponse{
-		Name:       framework + ":handler:" + handler,
-		Args:       "",
-		Message:    resp,
-		TimeStamps: []utils.TimeStamp{ts, endTripTs},
-	}
-	wsRespBytes, err := json.Marshal(wsResp)
-	if err != nil {
-		log.Error().Err(err).Msg("Error when marshaling the response")
-		return err
-	}
-	return c.Send(wsRespBytes)
 }
