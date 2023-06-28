@@ -2,7 +2,9 @@ package webserver
 
 import (
 	"fmt"
+	"github.com/valerius21/scap/pkg/sender"
 	"github.com/valerius21/scap/pkg/utils"
+	"net"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -11,18 +13,31 @@ import (
 )
 
 // Fiber is a webserver implementation using the Fiber framework on top of fastHTTP
-func Fiber() {
+func Fiber(receiverHost, receiverPort string) {
 	// Create a new Fiber instance
 	app := fiber.New()
+
+	// Create a connection to the receiver
+	s := sender.CreateSender(receiverHost, receiverPort)
+	defer func(conn net.Conn) {
+		err := conn.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("Error closing connection")
+		}
+	}(*s.C)
 
 	// Define the routes and their corresponding handlers
 	app.Get("/image", func(c *fiber.Ctx) error {
 		defer utils.TimeTrack(time.Now(), "Fiber:ImageHandler")
+
 		return c.SendString("imageHandler: not implemented")
 	})
 	app.Get("/empty", func(c *fiber.Ctx) error {
 		defer utils.TimeTrack(time.Now(), "Fiber:EmptyHandler")
-		fns.EmptyFn()
+		_, err := s.Send("empty:")
+		if err != nil {
+			return err
+		}
 		return c.SendString("EmptyHandler: Executed")
 	})
 	app.Get("/math", func(c *fiber.Ctx) error {
