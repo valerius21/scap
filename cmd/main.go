@@ -11,10 +11,12 @@ import (
 
 func main() {
 
-	err := os.Mkdir("/tmp/scap", 0777)
-	if err != nil {
-		log.Error().Err(err).Msg("Error when creating the tmp directory")
-		return
+	if _, err := os.Stat("/tmp/scap"); os.IsNotExist(err) {
+		err := os.Mkdir("/tmp/scap", 0777)
+		if err != nil {
+			log.Error().Err(err).Msg("Error when creating the tmp directory")
+			return
+		}
 	}
 
 	webServerPtr := flag.String("webserver", "net", "the webserver to run")
