@@ -5,11 +5,11 @@ import (
 	"github.com/valerius21/scap/pkg/sender"
 	"github.com/valerius21/scap/pkg/utils"
 	"net"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
-	"github.com/valerius21/scap/pkg/fns"
 )
 
 // Fiber is a webserver implementation using the Fiber framework on top of fastHTTP
@@ -43,12 +43,18 @@ func Fiber(receiverHost, receiverPort string) {
 	app.Get("/math", func(c *fiber.Ctx) error {
 		defer utils.TimeTrack(time.Now(), "Fiber:MathHandler")
 		number := c.QueryInt("number")
-		result := fns.MathFn(number)
-		return c.SendString(fmt.Sprintf("MathHandler: %.5f", result))
+		_, err := s.Send("math:" + strconv.Itoa(number))
+		if err != nil {
+			return err
+		}
+		return c.SendString(fmt.Sprintf("mathHandler: %d", -1))
 	})
 	app.Get("/sleep", func(c *fiber.Ctx) error {
 		defer utils.TimeTrack(time.Now(), "Fiber:SleepHandler")
-		fns.SleeperFn(1 * time.Second)
+		_, err := s.Send("sleep:")
+		if err != nil {
+			return err
+		}
 		return c.SendString("sleepHandler: slept for 1 second")
 	})
 

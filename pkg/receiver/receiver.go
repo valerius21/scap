@@ -80,8 +80,9 @@ func handleRequest(conn net.Conn) {
 		}
 		now := time.Now()
 		// Call math function
-		fns.MathFn(number)
+		n := fns.MathFn(number)
 		utils.TimeTrack(now, "TCP:MathHandler")
+		conn.Write([]byte(fmt.Sprintf("Result: %.2f", n)))
 	} else if substr == "sleep" {
 		now := time.Now()
 		// Call sleep function
@@ -97,12 +98,11 @@ func handleRequest(conn net.Conn) {
 		now := time.Now()
 		// Call empty function
 		fns.EmptyFn()
+		conn.Write([]byte("Done"))
 		utils.TimeTrack(now, "TCP:EmptyHandler")
 	} else {
 		// Handle unknown function
 		log.Info().Msg("Unknown function")
+		conn.Write([]byte("Unknown function"))
 	}
-
-	// Write the message in the connection channel.
-	//conn.Write([]byte(message))
 }
