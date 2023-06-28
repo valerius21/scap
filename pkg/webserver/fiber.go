@@ -1,9 +1,6 @@
 package webserver
 
 import (
-	"github.com/valerius21/scap/pkg/utils"
-	"time"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 )
@@ -14,10 +11,22 @@ func Fiber(receiverPort string) {
 	app := fiber.New()
 
 	// Define the routes and their corresponding handlers
-	app.Get("/image", func(c *fiber.Ctx) error {
-		defer utils.TimeTrack(time.Now(), "Fiber:ImageHandler")
+	app.Post("/image", func(c *fiber.Ctx) error {
+		file, err := c.FormFile("image")
+		if err != nil {
+			return c.SendString("Image: could not get file")
+		}
+		args, err := ImageSaver(file)
 
-		return c.SendString("imageHandler: not implemented")
+		if err != nil {
+			return c.SendString("Image: could not save image")
+		}
+
+		msg, err := CreateHandler("fiber", "image", args)
+		if err != nil {
+			return c.SendString(err.Error())
+		}
+		return c.Send(msg)
 	})
 	app.Get("/empty", func(ctx *fiber.Ctx) error {
 		msg, err := CreateHandler("fiber", "empty", "")

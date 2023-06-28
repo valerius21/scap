@@ -20,8 +20,23 @@ func NetHttp(receiverPort string) {
 }
 
 func ImageHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-	fmt.Fprintf(w, "imageHandler: not implemented")
+	_, file, err := r.FormFile("image")
+	if err != nil {
+		http.Error(w, "Image: could not get file", http.StatusInternalServerError)
+		return
+	}
+	args, err := ImageSaver(file)
+	if err != nil {
+		http.Error(w, "Image: could not save image", http.StatusInternalServerError)
+		return
+	}
+	msg, err := CreateHandler("net/http", "image", args)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, string(msg))
 }
 
 func SleepHandler(w http.ResponseWriter, r *http.Request) {

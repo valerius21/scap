@@ -6,9 +6,17 @@ import (
 	"github.com/valerius21/scap/pkg/common"
 	"github.com/valerius21/scap/pkg/nsq"
 	"github.com/valerius21/scap/pkg/webserver"
+	"os"
 )
 
 func main() {
+
+	err := os.Mkdir("/tmp/scap", 0777)
+	if err != nil {
+		log.Error().Err(err).Msg("Error when creating the tmp directory")
+		return
+	}
+
 	webServerPtr := flag.String("webserver", "net", "the webserver to run")
 	modePtr := flag.Bool("http", false, "if true, run the webserver in http mode,"+
 		" otherwise operator mode")

@@ -119,7 +119,20 @@ func (h *messageHandler) HandleMessage(m *nsq.Message) error {
 		{
 			log.Info().Msg("Image message received")
 			now := time.Now()
-			fns.TransformImage()
+
+			// Read the file into a byte slice
+			data, err := os.ReadFile(msg.Data)
+			if err != nil {
+				log.Error().Err(err).Msg("Failed to read the file")
+				return err
+			}
+
+			err = fns.TransformImage(data)
+			if err != nil {
+				log.Error().Err(err).Msg("Failed to transform the image")
+				return err
+			}
+
 			ts := utils.TimeTrack(now, "image")
 			response, err = json.Marshal(dto.Message{
 				Name:     "node:" + ts.Instance,

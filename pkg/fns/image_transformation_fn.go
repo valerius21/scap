@@ -44,9 +44,18 @@ func TransformImage(inputImage []byte) error {
 	// other transformations as mentioned in the paper are not available in the Go bindings
 
 	// create temporary file
-	file, err := os.CreateTemp("/tmp/scap", "scap.*.png")
+	file, err := os.Create("/tmp/scap/results.out")
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	fl, err := os.OpenFile(file.Name(), os.O_RDWR, 0777)
+	if err != nil {
+		return err
+	}
+	defer fl.Close()
 
-	err = mw.WriteImageFile(file)
+	err = mw.WriteImageFile(fl)
 	if err != nil {
 		return err
 	}

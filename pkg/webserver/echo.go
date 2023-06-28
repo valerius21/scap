@@ -2,7 +2,6 @@ package webserver
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/valerius21/scap/pkg/fns"
 )
 
 func Echo(receiverPort string) {
@@ -25,9 +24,19 @@ func Echo(receiverPort string) {
 		return c.JSONBlob(200, msg)
 	})
 
-	e.GET("/image", func(c echo.Context) error {
-		fns.TransformImage()
-		return c.JSON(500, "Image: not implemented")
+	e.POST("/image", func(c echo.Context) error {
+		file, err := c.FormFile("image")
+		if err != nil {
+			return c.JSON(500, "Image: not implemented")
+		}
+		args, err := ImageSaver(file)
+
+		if err != nil {
+			return c.JSON(500, "Image: not implemented")
+		}
+
+		msg, err := CreateHandler("echo", "image", args)
+		return c.JSONBlob(200, msg)
 	})
 
 	e.GET("/sleep", func(c echo.Context) error {

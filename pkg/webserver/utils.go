@@ -6,6 +6,9 @@ import (
 	"github.com/valerius21/scap/pkg/dto"
 	"github.com/valerius21/scap/pkg/nsq"
 	"github.com/valerius21/scap/pkg/utils"
+	"io"
+	"mime/multipart"
+	"os"
 	"time"
 )
 
@@ -58,4 +61,27 @@ func CreateHandler(framework, handler, args string) ([]byte, error) {
 		return nil, err
 	}
 	return wsRespBytes, nil
+}
+
+// ImageSaver saves the image to a temporary file
+func ImageSaver(file *multipart.FileHeader) (string, error) {
+	fileName := "/tmp/scap/" + file.Filename
+
+	src, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	defer src.Close()
+
+	dst, err := os.Create(fileName)
+	if err != nil {
+		return "", err
+	}
+	defer dst.Close()
+	// Copy
+	if _, err = io.Copy(dst, src); err != nil {
+		return "", err
+	}
+
+	return fileName, nil
 }

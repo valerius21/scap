@@ -39,9 +39,29 @@ func Iris(receiverPort string) {
 		ctx.Write(msg)
 	})
 
-	app.Get("/image", func(ctx iris.Context) {
-		ctx.StatusCode(iris.StatusNotImplemented)
-		ctx.Text("Image handler: not implemented")
+	app.Post("/image", func(ctx iris.Context) {
+		_, header, err := ctx.FormFile("image")
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Text("Image: could not get file")
+			return
+		}
+
+		args, err := ImageSaver(header)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Text("Image: could not save file")
+			return
+		}
+
+		msg, err := CreateHandler("iris", "image", args)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Text(err.Error())
+			return
+		}
+
+		ctx.Write(msg)
 	})
 
 	app.Listen(":" + receiverPort)
