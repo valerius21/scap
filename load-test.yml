@@ -1,18 +1,18 @@
 config:
-  target: "141.5.102.40"
+  target: "http://141.5.102.40"
   phases:
-    - duration: 1
+    - duration: 10
       arrivalRate: 1
-      rampTo: 10
+#      rampTo: 10
     - duration: 10
       arrivalRate: 10
-      rampTo: 100
+#      rampTo: 100
     - duration: 10
       arrivalRate: 100
-      rampTo: 1000
+#      rampTo: 1000
     - duration: 10
       arrivalRate: 1000
-      rampTo: 10000
+#      rampTo: 10000
 scenarios:
   - name: Test every endpoint
     flow:
