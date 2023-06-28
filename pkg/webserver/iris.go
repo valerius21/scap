@@ -2,6 +2,9 @@ package webserver
 
 import (
 	"fmt"
+	"github.com/rs/zerolog/log"
+	"github.com/valerius21/scap/pkg/sender"
+	"net"
 	"strconv"
 	"time"
 
@@ -9,9 +12,18 @@ import (
 	"github.com/valerius21/scap/pkg/fns"
 )
 
-func Iris() {
+func Iris(receiverHost, receiverPort string) {
 	app := iris.New()
 	app.Use(iris.Compression)
+
+	// Create a connection to the receiver
+	s := sender.CreateSender(receiverHost, receiverPort)
+	defer func(conn net.Conn) {
+		err := conn.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("Error closing connection")
+		}
+	}(*s.C)
 
 	app.Get("/math", func(ctx iris.Context) {
 		nubmerStr := ctx.Request().URL.Query().Get("number")

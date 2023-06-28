@@ -1,6 +1,9 @@
 package webserver
 
 import (
+	"github.com/rs/zerolog/log"
+	"github.com/valerius21/scap/pkg/sender"
+	"net"
 	"net/http"
 	"strconv"
 	"time"
@@ -9,8 +12,17 @@ import (
 	"github.com/valerius21/scap/pkg/fns"
 )
 
-func Gin() {
+func Gin(receiverHost, receiverPort string) {
 	r := gin.Default()
+
+	// Create a connection to the receiver
+	s := sender.CreateSender(receiverHost, receiverPort)
+	defer func(conn net.Conn) {
+		err := conn.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("Error closing connection")
+		}
+	}(*s.C)
 
 	r.GET("/math", func(ctx *gin.Context) {
 		numberStr := ctx.Query("number")

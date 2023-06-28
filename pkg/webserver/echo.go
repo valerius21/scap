@@ -2,6 +2,9 @@ package webserver
 
 import (
 	"fmt"
+	"github.com/rs/zerolog/log"
+	"github.com/valerius21/scap/pkg/sender"
+	"net"
 	"strconv"
 	"time"
 
@@ -9,8 +12,17 @@ import (
 	"github.com/valerius21/scap/pkg/fns"
 )
 
-func Echo() {
+func Echo(receiverHost, receiverPort string) {
 	e := echo.New()
+
+	// Create a connection to the receiver
+	s := sender.CreateSender(receiverHost, receiverPort)
+	defer func(conn net.Conn) {
+		err := conn.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("Error closing connection")
+		}
+	}(*s.C)
 
 	e.GET("/math", func(c echo.Context) error {
 		numberStr := c.QueryParam("number")

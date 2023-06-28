@@ -3,7 +3,9 @@ package webserver
 // Default Go Web Server
 import (
 	"fmt"
-	"log"
+	"github.com/rs/zerolog/log"
+	"github.com/valerius21/scap/pkg/sender"
+	"net"
 	"net/http"
 	"strconv"
 	"time"
@@ -13,7 +15,17 @@ import (
 
 const sleeperDuration = 1 * time.Second
 
-func NetHttp() {
+func NetHttp(receiverHost, receiverPort string) {
+
+	// Create a connection to the receiver
+	s := sender.CreateSender(receiverHost, receiverPort)
+	defer func(conn net.Conn) {
+		err := conn.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("Error closing connection")
+		}
+	}(*s.C)
+
 	// Define the routes and their corresponding handlers
 	http.HandleFunc("/image", ImageHandler)
 	http.HandleFunc("/sleep", SleepHandler)
@@ -21,8 +33,8 @@ func NetHttp() {
 	http.HandleFunc("/math", MathHandler)
 
 	// Start the server
-	log.Println("Server listening on port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Info().Msg("Server listening on port 8080...")
+	log.Error().Err(http.ListenAndServe(":8080", nil))
 }
 
 func ImageHandler(w http.ResponseWriter, r *http.Request) {

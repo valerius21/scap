@@ -18,19 +18,19 @@ func main() {
 	if *modePtr {
 		switch *webServerPtr {
 		case "fiber":
-			webserver.Fiber()
+			webserver.Fiber(*hostPtr, *portPtr)
 			return
 		case "echo":
-			webserver.Echo()
+			webserver.Echo(*hostPtr, *portPtr)
 			return
 		case "gin":
-			webserver.Gin()
+			webserver.Gin(*hostPtr, *portPtr)
 			return
 		case "iris":
-			webserver.Iris()
+			webserver.Iris(*hostPtr, *portPtr)
 			return
 		default:
-			webserver.NetHttp()
+			webserver.NetHttp(*hostPtr, *portPtr)
 			return
 		}
 	} else {
