@@ -22,33 +22,18 @@ func Fiber(receiverHost, receiverPort string) {
 
 		return c.SendString("imageHandler: not implemented")
 	})
-	app.Get("/empty", handler)
-	//	func(c *fiber.Ctx) error {
-	//	defer utils.TimeTrack(time.Now(), "Fiber:EmptyHandler")
-	//
-	//	// Send and receive messages here:
-	//
-	//	return nil
-	//})
-	//app.Get("/math", func(c *fiber.Ctx) error {
-	//	defer utils.TimeTrack(time.Now(), "Fiber:MathHandler")
-	//	s := makeSender()
-	//	number := c.QueryInt("number")
-	//	_, res, err := s.Send("math:" + strconv.Itoa(number))
-	//	if err != nil {
-	//		return err
-	//	}
-	//	return c.SendString(fmt.Sprintf("mathHandler: %s", res))
-	//})
-	//app.Get("/sleep", func(c *fiber.Ctx) error {
-	//	defer utils.TimeTrack(time.Now(), "Fiber:SleepHandler")
-	//	s := makeSender()
-	//	_, _, err := s.Send("sleep:_")
-	//	if err != nil {
-	//		return err
-	//	}
-	//	return c.SendString("sleepHandler: slept for 1 second")
-	//})
+	app.Get("/empty", func(ctx *fiber.Ctx) error {
+		return createHandler("fiber", "empty", "", ctx)
+	})
+
+	app.Get("/math", func(c *fiber.Ctx) error {
+		n := c.Query("number")
+		return createHandler("fiber", "math", n, c)
+	})
+
+	app.Get("/sleep", func(c *fiber.Ctx) error {
+		return createHandler("fiber", "sleep", "", c)
+	})
 
 	// Start the server
 	err := app.Listen(":8080")
@@ -57,12 +42,13 @@ func Fiber(receiverHost, receiverPort string) {
 		return
 	}
 }
-func handler(c *fiber.Ctx) error {
+
+func createHandler(framework, handler, args string, c *fiber.Ctx) error {
 	startFunction := time.Now()
 	// Create a message struct
 	message := dto.Message{
-		Name:     "empty",
-		Args:     "",
+		Name:     handler,
+		Data:     args,
 		Duration: -1,
 	}
 
@@ -87,15 +73,15 @@ func handler(c *fiber.Ctx) error {
 		log.Error().Err(err).Msg("Error when waiting for the response from NSQ")
 		return err
 	}
-	endTripTs := utils.TimeTrack(startTrip, "Fiber:EmptyHandler:Trip")
+	endTripTs := utils.TimeTrack(startTrip, framework+":"+handler+":trip")
 
 	// Unmarshal the response
 	var resp dto.Message
 	err = json.Unmarshal([]byte(response), &resp)
 
-	ts := utils.TimeTrack(startFunction, "Fiber:EmptyHandler")
+	ts := utils.TimeTrack(startFunction, framework+":"+handler+":function")
 	wsResp := dto.WebServerResponse{
-		Name:       "fiber:handler:empty",
+		Name:       framework + ":handler:" + handler,
 		Args:       "",
 		Message:    resp,
 		TimeStamps: []utils.TimeStamp{ts, endTripTs},

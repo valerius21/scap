@@ -2,6 +2,7 @@ package nsq
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/nsqio/go-nsq"
 	"github.com/rs/zerolog/log"
 	"github.com/valerius21/scap/pkg/common"
@@ -19,13 +20,14 @@ type messageHandler struct {
 	producer *nsq.Producer
 }
 
-func DefaultStopChannel() {
+func defaultBlocker() {
 	// Gracefully handle SIGINT and SIGTERM signals
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 	<-sigChan
 }
 
+// CreateConsumer creates a new NSQ consumer
 func CreateConsumer() {
 	// The only valid way to instantiate the Config
 	config := nsq.NewConfig()
@@ -61,7 +63,7 @@ func CreateConsumer() {
 		log.Fatal().Err(err).Msg("Error when connecting to NSQD")
 	}
 
-	DefaultStopChannel()
+	defaultBlocker()
 
 	// Stop the consumer
 	consumer.Stop()
@@ -93,23 +95,23 @@ func (h *messageHandler) HandleMessage(m *nsq.Message) error {
 			ts := utils.TimeTrack(now, "empty")
 			response, err = json.Marshal(dto.Message{
 				Name:     "node:" + ts.Instance,
-				Args:     "",
+				Data:     "",
 				Duration: ts.Duration,
 			})
 		}
 	case "math":
 		{
 			log.Info().Msg("Math message received")
-			number, err := strconv.Atoi(msg.Args)
+			number, err := strconv.Atoi(msg.Data)
 			if err != nil {
 				log.Error().Err(err).Msg("Failed to convert string to int")
 			}
 			now := time.Now()
-			fns.MathFn(number)
+			data := fns.MathFn(number)
 			ts := utils.TimeTrack(now, "math")
 			response, err = json.Marshal(dto.Message{
 				Name:     "node:" + ts.Instance,
-				Args:     "",
+				Data:     fmt.Sprintf("%.10f", data),
 				Duration: ts.Duration,
 			})
 		}
@@ -121,7 +123,7 @@ func (h *messageHandler) HandleMessage(m *nsq.Message) error {
 			ts := utils.TimeTrack(now, "image")
 			response, err = json.Marshal(dto.Message{
 				Name:     "node:" + ts.Instance,
-				Args:     "",
+				Data:     "",
 				Duration: ts.Duration,
 			})
 		}
@@ -133,7 +135,7 @@ func (h *messageHandler) HandleMessage(m *nsq.Message) error {
 			ts := utils.TimeTrack(now, "sleep")
 			response, err = json.Marshal(dto.Message{
 				Name:     "node:" + ts.Instance,
-				Args:     "",
+				Data:     "",
 				Duration: ts.Duration,
 			})
 		}
