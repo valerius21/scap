@@ -1,6 +1,8 @@
 package webserver
 
 import (
+	"encoding/json"
+	"github.com/valerius21/scap/pkg/nsq"
 	"github.com/valerius21/scap/pkg/utils"
 	"time"
 
@@ -19,13 +21,14 @@ func Fiber(receiverHost, receiverPort string) {
 
 		return c.SendString("imageHandler: not implemented")
 	})
-	app.Get("/empty", func(c *fiber.Ctx) error {
-		defer utils.TimeTrack(time.Now(), "Fiber:EmptyHandler")
-
-		//nsq.CreateProducer("empty", "")
-
-		return nil
-	})
+	app.Get("/empty", handler)
+	//	func(c *fiber.Ctx) error {
+	//	defer utils.TimeTrack(time.Now(), "Fiber:EmptyHandler")
+	//
+	//	// Send and receive messages here:
+	//
+	//	return nil
+	//})
 	//app.Get("/math", func(c *fiber.Ctx) error {
 	//	defer utils.TimeTrack(time.Now(), "Fiber:MathHandler")
 	//	s := makeSender()
@@ -52,4 +55,37 @@ func Fiber(receiverHost, receiverPort string) {
 		log.Error().Err(err).Msg("Failed to start server")
 		return
 	}
+}
+func handler(c *fiber.Ctx) error {
+	messageInput := "hello world"
+
+	// Create a message struct
+	message := struct {
+		Message string `json:"message"`
+	}{
+		Message: messageInput,
+	}
+
+	// Marshal the message to JSON
+	messageBytes, err := json.Marshal(message)
+	if err != nil {
+		log.Error().Err(err).Msg("Error when marshaling the message")
+		return err
+	}
+
+	// Publish the message to NSQ
+	err = nsq.PublishMessage(messageBytes)
+	if err != nil {
+		log.Error().Err(err).Msg("Error when publishing the message to NSQ")
+		return err
+	}
+
+	// Wait for the response from NSQ
+	response, err := nsq.WaitForResponse()
+	if err != nil {
+		log.Error().Err(err).Msg("Error when waiting for the response from NSQ")
+		return err
+	}
+
+	return c.SendString(response)
 }

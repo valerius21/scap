@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"github.com/rs/zerolog/log"
-	"github.com/valerius21/scap/pkg/common"
 	"github.com/valerius21/scap/pkg/nsq"
 	"github.com/valerius21/scap/pkg/webserver"
 )
@@ -20,7 +19,6 @@ func main() {
 	log.Info().Msg("Starting scap" + *webServerPtr + *hostPtr + *portPtr)
 
 	if *modePtr {
-		nsq.CreateProducer("test", "test", common.DefaultTopic)
 		switch *webServerPtr {
 		case "fiber":
 			webserver.Fiber(*hostPtr, *portPtr)
@@ -40,8 +38,9 @@ func main() {
 		}
 	} else {
 		log.Info().Msg("Running in consumer mode")
+		nsq.CreateConsumer()
 		//receiver.CreateConnection(*hostPtr, *portPtr)
 		//receiver.CreateServer(*hostPtr, *portPtr)
-		nsq.CreateConsumer(common.DefaultTopic, common.DefaultChannel, nsq.DefaultStopChannel)
+		//nsq.CreateConsumer(common.DefaultTopic, common.DefaultChannel, nsq.DefaultStopChannel)
 	}
 }

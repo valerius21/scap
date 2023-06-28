@@ -3,8 +3,8 @@ package nsq
 import (
 	"encoding/json"
 	"github.com/nsqio/go-nsq"
+	"github.com/rs/zerolog/log"
 	"github.com/valerius21/scap/pkg/dto"
-	"log"
 	"time"
 )
 
@@ -13,7 +13,7 @@ func CreateProducer(name, content, topic string) {
 	config := nsq.NewConfig() //Creating the Producer using NSQD Address
 	producer, err := nsq.NewProducer("127.0.0.1:4150", config)
 	if err != nil {
-		log.Fatal(err)
+		log.Error().Err(err).Msg("Error when creating the producer")
 	} //Init topic name and message
 	msg := dto.Message{
 		Name:      name,
@@ -22,10 +22,10 @@ func CreateProducer(name, content, topic string) {
 	} //Convert message as []byte
 	payload, err := json.Marshal(msg)
 	if err != nil {
-		log.Println(err)
+		log.Error().Err(err).Msg("Error when marshaling the message")
 	} //Publish the Message
 	err = producer.Publish(topic, payload)
 	if err != nil {
-		log.Println(err)
+		log.Error().Err(err).Msg("Error when publishing the message")
 	}
 }
