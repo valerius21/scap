@@ -25,7 +25,7 @@ func WaitForResponse() (string, error) {
 	}))
 
 	// Connect to NSQD for response messages
-	err = consumer.ConnectToNSQD("127.0.0.1:4150")
+	err = consumer.ConnectToNSQD(common.NsqHost + ":4150")
 	if err != nil {
 		return "", fmt.Errorf("error connecting to NSQD for response messages: %w", err)
 	}
@@ -42,7 +42,7 @@ func WaitForResponse() (string, error) {
 // PublishMessage publishes a message to NSQ
 func PublishMessage(message []byte) error {
 	// Instantiate a new NSQ producer
-	producer, err := nsq.NewProducer("127.0.0.1:4150", nsq.NewConfig())
+	producer, err := nsq.NewProducer(common.NsqHost+":4150", nsq.NewConfig())
 	if err != nil {
 		return fmt.Errorf("error creating NSQ producer: %w", err)
 	}

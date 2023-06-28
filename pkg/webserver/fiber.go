@@ -9,7 +9,7 @@ import (
 )
 
 // Fiber is a webserver implementation using the Fiber framework on top of fastHTTP
-func Fiber(receiverHost, receiverPort string) {
+func Fiber(receiverPort string) {
 	// Create a new Fiber instance
 	app := fiber.New()
 
@@ -45,7 +45,7 @@ func Fiber(receiverHost, receiverPort string) {
 	})
 
 	// Start the server
-	err := app.Listen(":8080")
+	err := app.Listen(":" + receiverPort)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to start server")
 		return

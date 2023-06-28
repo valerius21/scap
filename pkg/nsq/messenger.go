@@ -47,7 +47,7 @@ func CreateConsumer() {
 	}
 
 	// Instantiate a new NSQ producer
-	producer, err := nsq.NewProducer("127.0.0.1:4150", config)
+	producer, err := nsq.NewProducer(common.NsqHost+":4150", config)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error when creating the producer")
 	}
@@ -58,7 +58,7 @@ func CreateConsumer() {
 	})
 
 	// Use nsqlookupd to find nsqd instances
-	err = consumer.ConnectToNSQD("127.0.0.1:4150")
+	err = consumer.ConnectToNSQD(common.NsqHost + ":4150")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error when connecting to NSQD")
 	}

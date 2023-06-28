@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func Gin(receiverHost, receiverPort string) {
+func Gin(receiverPort string) {
 	r := gin.Default()
 
 	r.GET("/math", func(ctx *gin.Context) {
@@ -50,5 +50,5 @@ func Gin(receiverHost, receiverPort string) {
 		})
 	})
 
-	r.Run()
+	r.Run(":" + receiverPort)
 }

@@ -4,7 +4,7 @@ import (
 	"github.com/kataras/iris/v12"
 )
 
-func Iris(receiverHost, receiverPort string) {
+func Iris(receiverPort string) {
 	app := iris.New()
 	app.Use(iris.Compression)
 
@@ -44,5 +44,5 @@ func Iris(receiverHost, receiverPort string) {
 		ctx.Text("Image handler: not implemented")
 	})
 
-	app.Listen(":8080")
+	app.Listen(":" + receiverPort)
 }

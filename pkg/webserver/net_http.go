@@ -4,25 +4,10 @@ package webserver
 import (
 	"fmt"
 	"github.com/rs/zerolog/log"
-	"github.com/valerius21/scap/pkg/sender"
-	"net"
 	"net/http"
-	"time"
 )
 
-const sleeperDuration = 1 * time.Second
-
-func NetHttp(receiverHost, receiverPort string) {
-
-	// Create a connection to the receiver
-	s := sender.CreateSender(receiverHost, receiverPort)
-	defer func(conn net.Conn) {
-		err := conn.Close()
-		if err != nil {
-			log.Error().Err(err).Msg("Error closing connection")
-		}
-	}(*s.C)
-
+func NetHttp(receiverPort string) {
 	// Define the routes and their corresponding handlers
 	http.HandleFunc("/image", ImageHandler)
 	http.HandleFunc("/sleep", SleepHandler)
@@ -31,7 +16,7 @@ func NetHttp(receiverHost, receiverPort string) {
 
 	// Start the server
 	log.Info().Msg("Server listening on port 8080...")
-	log.Error().Err(http.ListenAndServe(":8080", nil))
+	log.Error().Err(http.ListenAndServe(":"+receiverPort, nil))
 }
 
 func ImageHandler(w http.ResponseWriter, r *http.Request) {

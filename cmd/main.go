@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/rs/zerolog/log"
+	"github.com/valerius21/scap/pkg/common"
 	"github.com/valerius21/scap/pkg/nsq"
 	"github.com/valerius21/scap/pkg/webserver"
 )
@@ -11,29 +12,35 @@ func main() {
 	webServerPtr := flag.String("webserver", "fiber", "the webserver to run")
 	modePtr := flag.Bool("http", false, "if true, run the webserver in http mode,"+
 		" otherwise operator mode")
-	hostPtr := flag.String("host", "localhost", "the host to run the tcp on")
-	portPtr := flag.String("port", "3000", "the port to run the tcp on")
+	hostPtr := flag.String("nsqHost", "127.0.0.1", "the host of the nsq server")
+	portPtr := flag.String("port", "3000", "the port to run the http on")
 
 	flag.Parse()
 
-	log.Info().Msg("Starting scap" + *webServerPtr + *hostPtr + *portPtr)
+	if *modePtr {
+		log.Info().Msg("Starting SCAP (HTTP)")
+	} else {
+		log.Info().Msg("Starting SCAP (Node)")
+	}
+
+	common.NsqHost = *hostPtr
 
 	if *modePtr {
 		switch *webServerPtr {
 		case "fiber":
-			webserver.Fiber(*hostPtr, *portPtr)
+			webserver.Fiber(*portPtr)
 			return
 		case "echo":
-			webserver.Echo(*hostPtr, *portPtr)
+			webserver.Echo(*portPtr)
 			return
 		case "gin":
-			webserver.Gin(*hostPtr, *portPtr)
+			webserver.Gin(*portPtr)
 			return
 		case "iris":
-			webserver.Iris(*hostPtr, *portPtr)
+			webserver.Iris(*portPtr)
 			return
 		default:
-			webserver.NetHttp(*hostPtr, *portPtr)
+			webserver.NetHttp(*portPtr)
 			return
 		}
 	} else {

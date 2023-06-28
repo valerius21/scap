@@ -5,7 +5,7 @@ import (
 	"github.com/valerius21/scap/pkg/fns"
 )
 
-func Echo(receiverHost, receiverPort string) {
+func Echo(receiverPort string) {
 	e := echo.New()
 
 	e.GET("/math", func(c echo.Context) error {
@@ -37,4 +37,6 @@ func Echo(receiverHost, receiverPort string) {
 		}
 		return c.JSON(200, msg)
 	})
+
+	e.Logger.Fatal(e.Start(":" + receiverPort))
 }
