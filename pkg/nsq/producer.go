@@ -5,7 +5,6 @@ import (
 	"github.com/nsqio/go-nsq"
 	"github.com/rs/zerolog/log"
 	"github.com/valerius21/scap/pkg/dto"
-	"time"
 )
 
 func CreateProducer(name, content, topic string) {
@@ -16,9 +15,9 @@ func CreateProducer(name, content, topic string) {
 		log.Error().Err(err).Msg("Error when creating the producer")
 	} //Init topic name and message
 	msg := dto.Message{
-		Name:      name,
-		Args:      content,
-		Timestamp: time.Now().String(),
+		Name:     name,
+		Args:     content,
+		Duration: -1,
 	} //Convert message as []byte
 	payload, err := json.Marshal(msg)
 	if err != nil {

@@ -39,8 +39,5 @@ func main() {
 	} else {
 		log.Info().Msg("Running in consumer mode")
 		nsq.CreateConsumer()
-		//receiver.CreateConnection(*hostPtr, *portPtr)
-		//receiver.CreateServer(*hostPtr, *portPtr)
-		//nsq.CreateConsumer(common.DefaultTopic, common.DefaultChannel, nsq.DefaultStopChannel)
 	}
 }

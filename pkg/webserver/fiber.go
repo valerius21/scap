@@ -2,6 +2,7 @@ package webserver
 
 import (
 	"encoding/json"
+	"github.com/valerius21/scap/pkg/dto"
 	"github.com/valerius21/scap/pkg/nsq"
 	"github.com/valerius21/scap/pkg/utils"
 	"time"
@@ -57,13 +58,12 @@ func Fiber(receiverHost, receiverPort string) {
 	}
 }
 func handler(c *fiber.Ctx) error {
-	messageInput := "hello world"
-
+	startFunction := time.Now()
 	// Create a message struct
-	message := struct {
-		Message string `json:"message"`
-	}{
-		Message: messageInput,
+	message := dto.Message{
+		Name:     "empty",
+		Args:     "",
+		Duration: -1,
 	}
 
 	// Marshal the message to JSON
@@ -73,6 +73,7 @@ func handler(c *fiber.Ctx) error {
 		return err
 	}
 
+	startTrip := time.Now()
 	// Publish the message to NSQ
 	err = nsq.PublishMessage(messageBytes)
 	if err != nil {
@@ -86,6 +87,23 @@ func handler(c *fiber.Ctx) error {
 		log.Error().Err(err).Msg("Error when waiting for the response from NSQ")
 		return err
 	}
+	endTripTs := utils.TimeTrack(startTrip, "Fiber:EmptyHandler:Trip")
 
-	return c.SendString(response)
+	// Unmarshal the response
+	var resp dto.Message
+	err = json.Unmarshal([]byte(response), &resp)
+
+	ts := utils.TimeTrack(startFunction, "Fiber:EmptyHandler")
+	wsResp := dto.WebServerResponse{
+		Name:       "fiber:handler:empty",
+		Args:       "",
+		Message:    resp,
+		TimeStamps: []utils.TimeStamp{ts, endTripTs},
+	}
+	wsRespBytes, err := json.Marshal(wsResp)
+	if err != nil {
+		log.Error().Err(err).Msg("Error when marshaling the response")
+		return err
+	}
+	return c.Send(wsRespBytes)
 }

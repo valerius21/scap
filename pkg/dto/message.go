@@ -1,7 +1,7 @@
 package dto
 
 type Message struct {
-	Name      string
-	Args      string
-	Timestamp string
+	Name     string `json:"name"`
+	Args     string `json:"args"`
+	Duration int64  `json:"duration"`
 }

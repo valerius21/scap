@@ -1,9 +1,13 @@
 package nsq
 
 import (
+	"encoding/json"
 	"github.com/nsqio/go-nsq"
 	"github.com/rs/zerolog/log"
 	"github.com/valerius21/scap/pkg/common"
+	"github.com/valerius21/scap/pkg/dto"
+	"github.com/valerius21/scap/pkg/fns"
+	"github.com/valerius21/scap/pkg/utils"
 	"os"
 	"os/signal"
 	"strconv"
@@ -71,14 +75,74 @@ func (h *messageHandler) HandleMessage(m *nsq.Message) error {
 	// Process the Message
 	log.Info().Msgf("Received message: %s", m.Body)
 
-	n := time.Now().Second()
-	i := strconv.Itoa(n)
+	var msg dto.Message
 
-	// Create a response message
-	response := []byte("Response to the incoming message: " + i)
+	err := json.Unmarshal(m.Body, &msg)
+	if err != nil {
+		return err
+	}
+
+	var response []byte
+
+	switch msg.Name {
+	case "empty":
+		{
+			log.Info().Msg("Empty message received")
+			now := time.Now()
+			fns.EmptyFn()
+			ts := utils.TimeTrack(now, "empty")
+			response, err = json.Marshal(dto.Message{
+				Name:     "node:" + ts.Instance,
+				Args:     "",
+				Duration: ts.Duration,
+			})
+		}
+	case "math":
+		{
+			log.Info().Msg("Math message received")
+			number, err := strconv.Atoi(msg.Args)
+			if err != nil {
+				log.Error().Err(err).Msg("Failed to convert string to int")
+			}
+			now := time.Now()
+			fns.MathFn(number)
+			ts := utils.TimeTrack(now, "math")
+			response, err = json.Marshal(dto.Message{
+				Name:     "node:" + ts.Instance,
+				Args:     "",
+				Duration: ts.Duration,
+			})
+		}
+	case "image":
+		{
+			log.Info().Msg("Image message received")
+			now := time.Now()
+			fns.GenerateImageMetadataFn()
+			ts := utils.TimeTrack(now, "image")
+			response, err = json.Marshal(dto.Message{
+				Name:     "node:" + ts.Instance,
+				Args:     "",
+				Duration: ts.Duration,
+			})
+		}
+	case "sleep":
+		{
+			log.Info().Msg("Sleep message received")
+			now := time.Now()
+			fns.SleeperFn(1)
+			ts := utils.TimeTrack(now, "sleep")
+			response, err = json.Marshal(dto.Message{
+				Name:     "node:" + ts.Instance,
+				Args:     "",
+				Duration: ts.Duration,
+			})
+		}
+	default:
+		response = []byte("Unknown message type")
+	}
 
 	// Publish the response message to a different topic
-	err := h.producer.Publish(common.ResponseTopic, response)
+	err = h.producer.Publish(common.ResponseTopic, response)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to publish response message")
 	}
