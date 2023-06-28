@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	webServerPtr := flag.String("webserver", "fiber", "the webserver to run")
+	webServerPtr := flag.String("webserver", "net", "the webserver to run")
 	modePtr := flag.Bool("http", false, "if true, run the webserver in http mode,"+
 		" otherwise operator mode")
 	hostPtr := flag.String("nsqHost", "127.0.0.1", "the host of the nsq server")

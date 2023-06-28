@@ -16,7 +16,7 @@ func Iris(receiverPort string) {
 			ctx.Text(err.Error())
 			return
 		}
-		ctx.JSON(msg)
+		ctx.Write(msg)
 	})
 
 	app.Get("/sleep", func(ctx iris.Context) {
@@ -26,7 +26,7 @@ func Iris(receiverPort string) {
 			ctx.Text(err.Error())
 			return
 		}
-		ctx.JSON(msg)
+		ctx.Write(msg)
 	})
 
 	app.Get("/empty", func(ctx iris.Context) {
@@ -36,7 +36,7 @@ func Iris(receiverPort string) {
 			ctx.Text(err.Error())
 			return
 		}
-		ctx.JSON(msg)
+		ctx.Write(msg)
 	})
 
 	app.Get("/image", func(ctx iris.Context) {

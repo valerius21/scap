@@ -15,7 +15,7 @@ func NetHttp(receiverPort string) {
 	http.HandleFunc("/math", MathHandler)
 
 	// Start the server
-	log.Info().Msg("Server listening on port 8080...")
+	log.Info().Msg("Server listening on port " + receiverPort)
 	log.Error().Err(http.ListenAndServe(":"+receiverPort, nil))
 }
 

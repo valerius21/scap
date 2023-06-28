@@ -14,7 +14,7 @@ func Echo(receiverPort string) {
 		if err != nil {
 			return err
 		}
-		return c.JSON(200, msg)
+		return c.JSONBlob(200, msg)
 	})
 
 	e.GET("/empty", func(c echo.Context) error {
@@ -22,7 +22,7 @@ func Echo(receiverPort string) {
 		if err != nil {
 			return err
 		}
-		return c.JSON(200, msg)
+		return c.JSONBlob(200, msg)
 	})
 
 	e.GET("/image", func(c echo.Context) error {
@@ -35,7 +35,7 @@ func Echo(receiverPort string) {
 		if err != nil {
 			return err
 		}
-		return c.JSON(200, msg)
+		return c.JSONBlob(200, msg)
 	})
 
 	e.Logger.Fatal(e.Start(":" + receiverPort))

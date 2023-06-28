@@ -18,7 +18,7 @@ func Gin(receiverPort string) {
 			})
 			return
 		}
-		ctx.JSON(http.StatusOK, msg)
+		ctx.Data(http.StatusOK, "application/json", msg)
 	})
 
 	r.GET("/empty", func(ctx *gin.Context) {
@@ -29,7 +29,7 @@ func Gin(receiverPort string) {
 			})
 			return
 		}
-		ctx.JSON(http.StatusOK, msg)
+		ctx.Data(http.StatusOK, "application/json", msg)
 	})
 
 	r.GET("/sleep", func(ctx *gin.Context) {
@@ -40,7 +40,7 @@ func Gin(receiverPort string) {
 			})
 			return
 		}
-		ctx.JSON(http.StatusOK, msg)
+		ctx.Data(http.StatusOK, "application/json", msg)
 	})
 
 	r.GET("/image", func(ctx *gin.Context) {
