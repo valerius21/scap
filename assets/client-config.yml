@@ -1,0 +1,4 @@
+client:
+  web_server: net
+  port: 3000
+emitter_address: "localhost:1234"

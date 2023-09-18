@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
+	"github.com/valerius21/scap/pkg/config"
 	"github.com/valerius21/scap/pkg/dto"
 	_ "github.com/valerius21/scap/pkg/rpc_services"
 	"github.com/valerius21/scap/pkg/utils"
@@ -19,8 +20,7 @@ func CreateHandler(framework, fn, fnArgs string) ([]byte, error) {
 
 	var response dto.Message
 
-	// TODO: change to use the service name
-	client, err := rpc.Dial("tcp", "localhost:1234")
+	client, err := rpc.Dial("tcp", config.GetConfig().EmitterAddress)
 	if err != nil {
 		return nil, err
 	}
