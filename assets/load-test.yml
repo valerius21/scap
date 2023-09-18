@@ -1,5 +1,5 @@
 config:
-  target: "http://141.5.102.40"
+  target: "http://target.local"
   phases:
     - duration: 10
       arrivalRate: 1
