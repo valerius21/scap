@@ -20,15 +20,17 @@ const SERIVCE_NAME = "rpc_services.HandlerService.HandleMessage"
 func CreateHandler(framework, fn, fnArgs string) ([]byte, error) {
 	startFunction := time.Now()
 
-	var response dto.Message
-
 	client, err := rpc.Dial("tcp", "localhost:1234")
 	if err != nil {
 		return nil, err
 	}
+
 	defer client.Close()
 
+	var response dto.Message
+
 	startTrip := time.Now()
+
 	err = client.Call("HandlerService.HandleMessage", &dto.Message{
 		Name:     fn,
 		Data:     fnArgs,
@@ -39,6 +41,7 @@ func CreateHandler(framework, fn, fnArgs string) ([]byte, error) {
 	}
 
 	endTripTs := utils.TimeTrack(startTrip, framework+":"+fn+":trip")
+
 	ts := utils.TimeTrack(startFunction, framework+":"+fn+":function")
 
 	wsResp := dto.WebServerResponse{
@@ -53,7 +56,7 @@ func CreateHandler(framework, fn, fnArgs string) ([]byte, error) {
 		return nil, err
 	}
 
-	// Return the captured data
+  // Return the captured data
 	return wsRespBytes, nil
 }
 
@@ -72,7 +75,7 @@ func ImageSaver(file *multipart.FileHeader) (string, error) {
 		return "", err
 	}
 	defer dst.Close()
-
+	// Copy
 	if _, err = io.Copy(dst, src); err != nil {
 		return "", err
 	}

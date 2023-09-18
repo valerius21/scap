@@ -30,12 +30,14 @@ func Echo(receiverPort string) {
 			return c.JSON(500, "Image: not implemented")
 		}
 		args, err := ImageSaver(file)
-
 		if err != nil {
 			return c.JSON(500, "Image: not implemented")
 		}
 
 		msg, err := CreateHandler("echo", "image", args)
+		if err != nil {
+			return c.JSON(500, "Image: not implemented")
+		}
 		return c.JSONBlob(200, msg)
 	})
 

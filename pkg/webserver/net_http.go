@@ -3,8 +3,9 @@ package webserver
 // Default Go Web Server
 import (
 	"fmt"
-	"github.com/rs/zerolog/log"
 	"net/http"
+
+	"github.com/rs/zerolog/log"
 )
 
 func NetHttp(receiverPort string) {
@@ -39,7 +40,7 @@ func ImageHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, string(msg))
 }
 
-func SleepHandler(w http.ResponseWriter, r *http.Request) {
+func SleepHandler(w http.ResponseWriter, _ *http.Request) {
 	msg, err := CreateHandler("net/http", "sleep", "")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -50,7 +51,7 @@ func SleepHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, string(msg))
 }
 
-func EmptyHandler(w http.ResponseWriter, r *http.Request) {
+func EmptyHandler(w http.ResponseWriter, _ *http.Request) {
 	msg, err := CreateHandler("net/http", "empty", "")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
