@@ -3,13 +3,13 @@ config:
   phases:
     - duration: 10
       arrivalRate: 1
-#      rampTo: 10
+    #      rampTo: 10
     - duration: 10
       arrivalRate: 10
-#      rampTo: 100
+    #      rampTo: 100
     - duration: 10
       arrivalRate: 100
-#      rampTo: 1000
+    #      rampTo: 1000
     - duration: 10
       arrivalRate: 1000
 #      rampTo: 10000
