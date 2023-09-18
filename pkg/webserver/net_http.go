@@ -37,7 +37,7 @@ func ImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, string(msg))
+	fmt.Fprint(w, string(msg))
 }
 
 func SleepHandler(w http.ResponseWriter, _ *http.Request) {
@@ -48,7 +48,7 @@ func SleepHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 	// omit a text response
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, string(msg))
+	fmt.Fprint(w, string(msg))
 }
 
 func EmptyHandler(w http.ResponseWriter, _ *http.Request) {
@@ -58,7 +58,7 @@ func EmptyHandler(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, string(msg))
+	fmt.Fprint(w, string(msg))
 }
 
 func MathHandler(w http.ResponseWriter, r *http.Request) {
@@ -70,5 +70,5 @@ func MathHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, string(msg))
+	fmt.Fprint(w, string(msg))
 }

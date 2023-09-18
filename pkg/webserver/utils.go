@@ -14,14 +14,12 @@ import (
 	"github.com/valerius21/scap/pkg/utils"
 )
 
-const SERIVCE_NAME = "rpc_services.HandlerService.HandleMessage"
-
-// TODO: rename args to their actual name
 func CreateHandler(framework, fn, fnArgs string) ([]byte, error) {
 	startFunction := time.Now()
 
 	var response dto.Message
 
+	// TODO: change to use the service name
 	client, err := rpc.Dial("tcp", "localhost:1234")
 	if err != nil {
 		return nil, err

@@ -3,13 +3,10 @@ package fns
 import (
 	"math"
 	"math/rand"
-	"time"
 )
 
 // estimatePI estimates the value of PI using the Monte Carlo method.
 func estimatePI(numPoints int) float64 {
-	rand.Seed(time.Now().UnixNano())
-
 	pointsInsideCircle := 0
 
 	for i := 0; i < numPoints; i++ {
