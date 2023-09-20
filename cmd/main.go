@@ -6,6 +6,7 @@ import (
 	"net/rpc"
 	"os"
 
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/valerius21/scap/pkg/config"
 	"github.com/valerius21/scap/pkg/rpc_services"
@@ -13,6 +14,13 @@ import (
 )
 
 func main() {
+	runLogFile, _ := os.OpenFile(
+		"scap.log",
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
+		0o664,
+	)
+	multi := zerolog.MultiLevelWriter(os.Stdout, runLogFile)
+	log.Logger = zerolog.New(multi).With().Timestamp().Logger()
 	if _, err := os.Stat("/tmp/scap"); os.IsNotExist(err) {
 		err := os.Mkdir("/tmp/scap", 0o644) // Owner -> RW, Others -> R
 		if err != nil {
