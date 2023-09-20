@@ -1,0 +1,31 @@
+config:
+  target: "http://target.local:3000"
+  processor: "upload.js"
+  http:
+    timeout: 30
+  phases:
+    - duration: 10
+      arrivalRate: 1
+      name:
+        "10-1"
+        #rampTo: 10
+    - duration: 10
+      arrivalRate: 10
+      name:
+        "10-10"
+        #rampTo: 100
+    - duration: 10
+      arrivalRate: 100
+      name:
+        "10-100"
+        #rampTo: 1000
+    - duration: 10
+      arrivalRate: 1000
+      name:
+        "10-1000"
+        #rampTo: 10000
+scenarios:
+  - name: Test sleep endpoint
+    flow:
+      - get:
+          url: "/sleep"
