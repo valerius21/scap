@@ -76,7 +76,7 @@ func ImageSaver(file *multipart.FileHeader) (string, error) {
 		return "", err
 	}
 
-	fBytes, err := io.ReadAll(dst)
+	fBytes, err := io.ReadAll(src)
 	if err != nil {
 		return "", err
 	}
