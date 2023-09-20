@@ -1,6 +1,7 @@
 package webserver
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"io"
 	"mime/multipart"
@@ -75,5 +76,10 @@ func ImageSaver(file *multipart.FileHeader) (string, error) {
 		return "", err
 	}
 
-	return fileName, nil
+	fBytes, err := io.ReadAll(dst)
+	if err != nil {
+		return "", err
+	}
+
+	return base64.StdEncoding.EncodeToString(fBytes), nil
 }

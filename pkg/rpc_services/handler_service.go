@@ -1,8 +1,8 @@
 package rpc_services
 
 import (
+	"encoding/base64"
 	"fmt"
-	"os"
 	"strconv"
 	"time"
 
@@ -49,8 +49,7 @@ func (*HandlerService) HandleMessage(msg *dto.Message, reply *dto.Message) error
 			log.Info().Msg("Image message received")
 			now := time.Now()
 
-			// Read the file into a byte slice
-			data, err := os.ReadFile(msg.Data)
+			data, err := base64.StdEncoding.DecodeString(msg.Data)
 			if err != nil {
 				log.Error().Err(err).Msg("Failed to read the file")
 				return err
